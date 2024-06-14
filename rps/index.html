@@ -1,0 +1,75 @@
+<head>
+	<title>AI Rock Paper Scissors v0.1.0</title>
+	<link rel="stylesheet" type="text/css" href="./style.css" />
+	<link rel="icon" type="image/x-icon" href="./favicon.png" />
+</head>
+
+<body>
+	<div id="insturctions">
+		<p>Let's play Rock/Paper/Scissors!<br>
+		Rock smashes Scissors, Scissors cuts Paper, and Paper covers Rock.</p>
+	</div>
+	<div id="gameLog">&nbsp</div>
+	<div id="userInput">
+		<input type="text" id="plyInput" name="plyChoice" placeholder="Select Rock, Paper, or Scissors." onkeydown="keyChecker(this)" />
+		<input type="button" id="btnSubmit" name="btnSubmit" value="SUBMIT!" />
+	</div>
+</body>
+
+<script>
+	var plyChoice, plyChoiceText, compChoice, compChoiceText, options;
+	options = ["rock", "paper", "scissors"], weights = [32,32,32];
+
+	document.getElementById("btnSubmit").addEventListener("click", logic);
+
+	function keyChecker(element){
+		if (event.key == "Enter"){
+			logic();
+		}
+	}
+
+	function logic(){
+		var message;
+		plyChoiceText = document.getElementById("plyInput").value;
+
+		if (options.includes(plyChoiceText.toLowerCase())){
+			compChoice = Math.random(); //random number from 0 to 1
+			//compChoice = Math.floor(compChoice * 3); // convert to [0,1,2] by multiplying compChoice by 3, and rounding down
+			compChoice *= (weights[0] + weights[1] + weights[2]);
+			//compChoiceText = options[compChoice]; //sets cpu's rps
+			compChoiceText = "rock";
+
+			if (compChoice > weights[0]){
+				compChoiceText = "paper";
+			}
+			if (compChoice > weights[0] + weights[1]){
+				compChoiceText = "scissors";
+			}
+
+			compChoice = options.indexOf(compChoiceText);
+			plyChoice = options.indexOf(plyChoiceText);
+
+			var result = (3+(plyChoice - compChoice)) % 3;
+
+			message = "I picked '" + compChoiceText + "'. You picked '" + plyChoiceText; //sets message before win result
+
+			//adds result at the end of message
+			if (result == 0){ 
+				message = message + "'. We tied."; 
+			} else if (result == 1){
+				message = message +  "'. You win!!";
+				weights[compChoice] *= .5;
+			} else {
+				message = message +  "'. You LOST.";
+				weights[compChoice] *= 2;
+			}
+		} else {
+			message = "Please type 'rock', 'paper', or 'scissors'.";
+		}
+		document.getElementById("gameLog").innerHTML = document.getElementById("gameLog").innerHTML + "<p>" + message + "</p>" 
+
+		document.getElementById("plyInput").value = "";
+
+		//document.getElementById("gameLog").innerHTML = document.getElementById("gameLog").innerHTML + "<p>" + compChoice + plyChoice + result + "</p>" 
+	}
+</script>
